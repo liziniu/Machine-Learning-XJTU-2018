@@ -6,7 +6,7 @@ I use sklearn to generate raw data(with 10 fetures and 3 classes). The raw data 
 
 ![raw data](https://github.com/liziniu/machine_learning_2018_spring/blob/master/k-means/raw%20data.png)
 
-After clustering, the results is here(note that I use t-sne to visualize the high dimensional data!)
+After clustering, the results is here(note that I use [t-sne](https://github.com/liziniu/machine_learning_2018_spring/blob/master/k-means/t-sne-tutorial.ipynb) to visualize the high dimensional data!)
 
 ![k-means results](https://github.com/liziniu/machine_learning_2018_spring/blob/master/k-means/k-means%20results.png)
 
