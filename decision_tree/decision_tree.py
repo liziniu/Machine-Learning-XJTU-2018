@@ -2,6 +2,9 @@
 from math import log2
 from PIL import Image, ImageDraw
 
+# Please note that
+# This script is written by Python 2.7 !!!
+
 my_data = [['slashdot', 'USA', 'yes', 18, 'None'],
            ['google', 'France', 'yes', 23, 'Premium'],
            ['digg', 'USA', 'yes', 24, 'Basic'],
@@ -30,14 +33,14 @@ class DecisionNode:
     ):
         self.col = col              # the criteria to be tested
         self.value = value          # true value
-        self.results = results      # 分类结果，非叶子结点均为None
+        self.results = results      # the reslut of classification; non-leave node is None
         self.tb = tb                # true
         self.fb = fb                # false
 
 
-# 分割数据集
+# divide dataset
 def divide_set(rows, column, value):
-    # 根据value对数据进行2分类，set_1中为true, set_2中为false
+    # according to value, divide the data into 2 classes
     split_function = None
     if isinstance(value, int) or isinstance(value, float):
         split_function = lambda row: row[column] >= value
@@ -50,18 +53,18 @@ def divide_set(rows, column, value):
     return set_1, set_2
 
 
-# 对分类结果进行计数
+# count the result
 def unique_counts(rows):
     results = {}
     for row in rows:
-        r = row[len(row) - 1]    # 分类结果:None, Basic, Premium
+        r = row[len(row) - 1]    # All possible results:None, Basic, Premium
         if r not in results:
             results[r] = 0
         results[r] += 1
     return results
 
 
-# 对一组数据计算交叉熵
+# compute the entropy
 def entropy(rows):
     results = unique_counts(rows)
     ent = 0.0
@@ -70,24 +73,22 @@ def entropy(rows):
         ent -= p * log2(p)
     return ent
 
-
+# build tree recursively
 def build_tree(rows, scoref=entropy):
-    # 基准情况
+    # basic condition 
     if len(rows) == 0:
         return DecisionNode()
 
-    current_score = scoref(rows)      # 分类前的得分
+    current_score = scoref(rows)      # the score before buidling next sub-tree
     best_gain = 0.0
     best_criteria = None
     best_sets = None
 
-    column_count = len(rows[0]) - 1    # 特征数量
+    column_count = len(rows[0]) - 1    # the number of features
     for col in range(column_count):
-        # 在当前列中生成一个由不同值构成的序列
         column_values = {}
         for row in rows:
             column_values[row[col]] = 1
-        # 分类
         for value in column_values.keys():
             set_1, set_2 = divide_set(rows, col, value)
 
@@ -97,25 +98,22 @@ def build_tree(rows, scoref=entropy):
                 best_gain = gain
                 best_criteria = (col, value)
                 best_sets = (set_1, set_2)
-        # 创建子分支
+    # build sub tree
     if best_gain > 0:
-        # 不是叶子结点，继续递归分类，分类结果res=None, 判断条件(特征)为col,临界值为value
         true_branch = build_tree(best_sets[0])
         false_branch = build_tree(best_sets[1])
         return DecisionNode(col=best_criteria[0], value=best_criteria[1], tb=true_branch, fb=false_branch)
     else:
-        # 不能再分类，返回分类的计数结果
         return DecisionNode(results=unique_counts(rows))
 
-
+# print the tree structure
 def print_tree(tree, indent=''):
-    # 叶子结点，其results为分类结果；否则，其results为None
     if tree.results is not None:
         print(str(tree.results))
     else:
-        # 打印判断条件
+        # the criteria
         print(str(tree.col) + ':' + str(tree.value) + "?")
-        # 打印分支
+        # the left and right branch
         print(indent + "T->", end='')
         print_tree(tree.tb, indent+'  ')
         print(indent + "F->", end='')
@@ -136,22 +134,18 @@ def get_depth(tree):
 
 def draw_node(draw, tree, x, y):
     if tree.results is None:
-        # 得到每个分支的宽度
         w1 = get_width(tree.fb) * 100
         w2 = get_width(tree.tb) * 100
 
-        # 确定此节点所要占据的总空间
         left = x - (w1 + w2) / 2
         right = x + (w1 + w2) / 2
 
-        # 绘制判断条件字符串
+        # criteria 
         draw.text((x-20, y-10), str(tree.col) + ":" + str(tree.value), (0, 0, 0))
 
-        # 绘制到分支的连线
         draw.line((x, y, left + w1/2, y + 100), fill=(255, 0, 0))
         draw.line((x, y, right - w2/2, y + 100), fill=(255, 0, 0))
 
-        # 绘制分支的节点
         draw_node(draw, tree.fb, left+w1/2, y+100)
         draw_node(draw, tree.tb, right-w2/2, y+100)
     else:
@@ -169,7 +163,7 @@ def draw_tree(tree, jpeg='tree.jpeg'):
     draw_node(draw, tree, w/2, 20)
     img.save(jpeg, 'JPEG')
 
-
+# predict on new data
 def predict(observation, tree):
     if tree.results is not None:
         return tree.results
@@ -188,27 +182,23 @@ def predict(observation, tree):
                 branch = tree.fb
         return predict(observation, branch)
 
-
+# prune for tree to avoid over-fitting
 def prune(tree, min_gain):
-    # 如果分支不是叶节点，则对其进行剪枝操作
     if tree.tb.results is None:
         prune(tree.tb, min_gain)
     if tree.tb.results is None:
         predict(tree.fb, min_gain)
 
-    # 如果两个子分支都是叶子节点，则判断它们是否需要合并
     if tree.tb.results is not None and tree.fb.results is not None:
-        # 构造合并后的数据集
+        # merge the sub-tree
         tb, fb = [], []
         for v, c in tree.tb.results.items():
             tb += [[v]] * c
         for v, c in tree.tb.results.items():
             fb += [[v]] * c
-
-        # 检查熵的减少情况
+                      
         delta = entropy(tb + fb) - (entropy(tb) + entropy(fb))/2
         if delta < min_gain:
-            # 合并分支
             tree.tb, tree.fb = None, None
             tree.results = unique_counts(tb + fb)
 
