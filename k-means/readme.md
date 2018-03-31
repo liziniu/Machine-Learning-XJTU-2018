@@ -1,4 +1,4 @@
-In this file, I complete the algorithm of k-means. 
+This part is the implementation of k-means. 
 
 I recommend you to understand the theory from 《Pattern Recognition and Machine Learning》.
 
