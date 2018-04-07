@@ -7,3 +7,7 @@ I use the [digit data](http://scikit-learn.org/stable/modules/generated/sklearn.
 Without kernel(i.e. it is a linear algorithm), the classification boundary are plotted in the following.
 
 ![svm_results](https://github.com/liziniu/machine_learning_2018_spring/blob/master/svm/svm_results.png)
+
+
+With rbf kernel, the result is as follows:
+![kernel_svm](https://github.com/liziniu/machine_learning_2018_spring/blob/master/svm/kernel_svm.png)
