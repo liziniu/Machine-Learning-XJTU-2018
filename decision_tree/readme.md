@@ -4,5 +4,5 @@ I only complete the classification function( Maybe I will complete the regressio
 
 Here the classification reslut! It is a tree structure.
 <div align=center>
- <img src="https://github.com/liziniu/machine_learning_2018_spring/blob/master/decision_tree/tree.jpeg" width="300" height="300" />
+ <img src="https://github.com/liziniu/machine_learning_2018_spring/blob/master/decision_tree/tree.jpeg" width="500" height="500" />
 <div>
