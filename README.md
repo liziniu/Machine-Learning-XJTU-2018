@@ -14,7 +14,7 @@
 
 * [Evolutionary Expansion](https://github.com/liziniu/machine_learning_2018_spring/tree/master/EM)
 
-   * [Mixture Gaussian Model](https://github.com/liziniu/machine_learning_2018_spring/blob/master/EM/gmm.py)
+   * [Mixture Gaussian Model](https://github.com/liziniu/machine_learning_2018_spring/blob/master/EM/混合高斯聚类(Mixture%20Gaussian%20Cluster).ipynb)
    
    * [Las Vagas Dice Trick](https://github.com/liziniu/machine_learning_2018_spring/blob/master/EM/Las%20Vegas%20Dice%20Trick.pdf)
 
